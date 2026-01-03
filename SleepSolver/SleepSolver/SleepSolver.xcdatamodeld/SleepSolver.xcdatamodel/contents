@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24E263" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="DailyHabitMetrics" representedClassName="DailyHabitMetrics" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO" indexed="YES"/>
+        <attribute name="exerciseTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="steps" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="timeinDaylight" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="sleepSession" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SleepSessionV2" inverseName="habitMetrics" inverseEntity="SleepSessionV2"/>
+    </entity>
+    <entity name="HabitDefinition" representedClassName=".HabitDefinition" syncable="YES">
+        <attribute name="icon" attributeType="String"/>
+        <attribute name="isArchived" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="sortOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="HabitRecord" representedClassName=".HabitRecord" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO" indexed="YES"/>
+        <attribute name="entryDate" optional="NO" attributeType="Date" usesScalarValueType="NO" indexed="YES"/>
+        <attribute name="isResolved" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="value" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="NO" attributeType="String" indexed="YES"/>
+        <relationship name="definition" optional="NO" maxCount="1" destinationEntity="HabitDefinition"/>
+        <relationship name="sleepSession" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SleepSessionV2" inverseName="manualHabits" inverseEntity="SleepSessionV2"/>
+    </entity>
+    <entity name="HealthKitAnchor" representedClassName=".HealthKitAnchor" syncable="YES">
+        <attribute name="anchor" optional="YES" attributeType="Binary"/>
+        <attribute name="dataType" optional="NO" attributeType="String" indexed="YES"/>
+        <attribute name="lastUpdated" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="SleepPeriod" representedClassName=".SleepPeriod" syncable="YES">
+        <attribute name="duration" optional="NO" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="endDateUTC" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="NO" attributeType="String" indexed="YES"/>
+        <attribute name="isMajorSleep" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isResolved" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="originalTimeZone" optional="NO" attributeType="String"/>
+        <attribute name="sourceIdentifier" optional="NO" attributeType="String"/>
+        <attribute name="startDateUTC" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="analysisSession" optional="YES" maxCount="1" destinationEntity="SleepSessionV2" inverseName="sourcePeriods" inverseEntity="SleepSessionV2" deletionRule="Nullify"/>
+        <relationship name="samples" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SleepSample" inverseName="sleepPeriod" inverseEntity="SleepSample"/>
+    </entity>
+    <entity name="SleepSessionV2" representedClassName=".SleepSessionV2" syncable="YES">
+        <!-- The primary key for UI lookups. Represents the start of the calendar day that "owns" this sleep. -->
+        <attribute name="ownershipDay" optional="NO" attributeType="Date" usesScalarValueType="NO" indexed="YES"/>
+        
+        <!-- Core Timestamps (always in UTC). Based on the LONGEST source period for this day. -->
+        <attribute name="startDateUTC" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endDateUTC" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        
+        <!-- Summarized Duration Metrics. Based on the LONGEST source period for this day. -->
+        <attribute name="deepDuration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="remDuration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="totalAwakeTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="totalSleepTime" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="totalTimeInBed" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        
+        <!-- Health & Score Metrics -->
+        <attribute name="sleepScore" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="isFinalized" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="averageHeartRate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="averageHRV" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="averageSpO2" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="averageRespiratoryRate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="wristTemperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+
+        <!-- Recovery Z-Scores -->
+        <attribute name="hrvStatus" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="rhrStatus" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="respStatus" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="spo2Status" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="temperatureStatus" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+
+        <!-- Recovery Baselines -->
+        <attribute name="hrvBaseline" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="rhrBaseline" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="respBaseline" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="spo2Baseline" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+        <attribute name="temperatureBaseline" optional="YES" attributeType="Double" defaultValueString="-100.0" usesScalarValueType="YES"/>
+
+        <!-- Relationships -->
+        <relationship name="sourcePeriods" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SleepPeriod" inverseName="analysisSession" inverseEntity="SleepPeriod"/>
+        <relationship name="wristTemperatures" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WristTemperature" inverseName="session" inverseEntity="WristTemperature"/>
+        <relationship name="habitMetrics" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DailyHabitMetrics" inverseName="sleepSession" inverseEntity="DailyHabitMetrics"/>
+        <relationship name="workouts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Workout" inverseName="sleepSession" inverseEntity="Workout"/>
+        <relationship name="manualHabits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="HabitRecord" inverseName="sleepSession" inverseEntity="HabitRecord"/>
+    </entity>
+    <entity name="WristTemperature" representedClassName=".WristTemperature" syncable="YES">
+        <attribute name="date" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isResolved" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="uuid" optional="NO" attributeType="UUID" usesScalarValueType="NO" indexed="YES"/>
+        <attribute name="value" optional="NO" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="session" optional="YES" maxCount="1" destinationEntity="SleepSessionV2" inverseName="wristTemperatures" inverseEntity="SleepSessionV2" deletionRule="Nullify"/>
+    </entity>
+    <entity name="Workout" representedClassName=".Workout" syncable="YES">
+        <attribute name="uuid" optional="NO" attributeType="UUID" usesScalarValueType="NO" indexed="YES"/>
+        <attribute name="date" optional="NO" attributeType="Date" usesScalarValueType="NO" indexed="YES"/>
+        <attribute name="workoutType" optional="NO" attributeType="String"/>
+        <attribute name="workoutLength" optional="NO" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="timeOfDay" optional="NO" attributeType="String"/>
+        <attribute name="calories" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="averageHeartRate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="sleepSession" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SleepSessionV2" inverseName="workouts" inverseEntity="SleepSessionV2"/>
+    </entity>
+    <entity name="SleepSample" representedClassName=".SleepSample" syncable="YES">
+        <attribute name="bundleID" optional="YES" attributeType="String"/>
+        <attribute name="endDateUTC" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="productType" optional="YES" attributeType="String"/>
+        <attribute name="stage" optional="NO" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startDateUTC" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="uuid" optional="NO" attributeType="UUID" usesScalarValueType="NO" indexed="YES"/>
+        <relationship name="sleepPeriod" optional="YES" maxCount="1" destinationEntity="SleepPeriod" inverseName="samples" inverseEntity="SleepPeriod" deletionRule="Nullify"/>
+    </entity>
+</model>
